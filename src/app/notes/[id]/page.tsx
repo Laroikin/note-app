@@ -20,7 +20,7 @@ export default async function NotePage({ params }: any) {
   const note = await getNote(params.id);
   const { title, content, created } = note || {};
 
-  const date = new Date(created).toLocaleDateString("en-US");
+  const date = new Date(created).toUTCString();
 
   return (
     <div>

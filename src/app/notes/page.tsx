@@ -23,7 +23,7 @@ export default async function NotesPage() {
   return (
     <div>
       <h1>Notes</h1>
-      <div className="grid xl:grid-cols-3 gap-6 sm:grid-cols-1 md:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
         {notes
           .sort((a, b) => {
             return (
@@ -49,39 +49,27 @@ function Note({ note }: NoteProps) {
   const formatter = new Intl.RelativeTimeFormat("en", {
     style: "short",
     numeric: "auto",
-    
   });
 
+  //format the date to be relative in seconds, minutes, hours, days, weeks, months, years with timezone offset
   const date = new Date(created);
   const now = new Date();
-  const diff = now.getTime() - date.getTime() - 32400000;
-  const diffInSeconds = Math.floor(diff / 1000);
-  const diffInMinutes = Math.floor(diffInSeconds / 60);
-  const diffInHours = Math.floor(diffInMinutes / 60);
-  const diffInDays = Math.floor(diffInHours / 24);
-  const diffInWeeks = Math.floor(diffInDays / 7);
-  const diffInMonths = Math.floor(diffInDays / 30);
-  const diffInYears = Math.floor(diffInDays / 365);
-  let formattedDate = formatter.format(diffInSeconds, "second");
+  const diff = date.getTime() - now.getTime() - now.getTimezoneOffset() * 60 * 1000;
+  const diffInDays = diff / (1000 * 60 * 60 * 24);
+  const diffInWeeks = diffInDays / 7;
+  const diffInMonths = diffInWeeks / 4;
+  const diffInYears = diffInMonths / 12;
+  const formattedDate =
+    diffInYears < -1
+      ? formatter.format(Math.round(diffInYears), "year")
+      : diffInMonths < -1
+      ? formatter.format(Math.round(diffInMonths), "month")
+      : diffInWeeks < -1
+      ? formatter.format(Math.round(diffInWeeks), "week")
+      : diffInDays < -1
+      ? formatter.format(Math.round(diffInDays), "day")
+      : formatter.format(Math.round(diffInDays * 24), "hour");
 
-  if (diffInSeconds >= 60) {
-    formattedDate = formatter.format(diffInMinutes, "minute");
-  }
-  if (diffInMinutes >= 60) {
-    formattedDate = formatter.format(diffInHours, "hour");
-  }
-  if (diffInHours >= 24) {
-    formattedDate = formatter.format(diffInDays, "day");
-  }
-  if (diffInDays >= 7) {
-    formattedDate = formatter.format(diffInWeeks, "week");
-  }
-  if (diffInDays >= 30) {
-    formattedDate = formatter.format(diffInMonths, "month");
-  }
-  if (diffInDays >= 365) {
-    formattedDate = formatter.format(diffInYears, "year");
-  }
 
   return (
     <Link href={`/notes/${id}`}>

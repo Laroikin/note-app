@@ -5,7 +5,6 @@ import type { SubmitHandler } from "react-hook-form";
 import { useForm } from "react-hook-form";
 
 import { useEffect } from "react";
-import { useHotkeys } from "react-hotkeys-hook";
 
 type Inputs = {
   title: string;
