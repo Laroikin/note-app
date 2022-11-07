@@ -1,5 +1,0 @@
-# config.yml
-dev:
-  type: http
-  region: us
-  to: localhost:8090
